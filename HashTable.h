@@ -7,19 +7,15 @@
 #include "LinkedList.h"
 #include "Data.h"
 #include <cmath>
-#define M 10000
-#define A 0.6180339887
 
 struct HashTable{
     const float loadFactor = 0.647;
     const int alpha = 2;
     int m = 8;
     int n = 0;
-    //LinkedList bucketsArray[M];
     LinkedList* bucketsArray = new LinkedList[m];
 
     int hash(long long k){
-//        int index = floor(fmod((k*A), 1) * m);
         int index = k % m;
         return index;
     }
@@ -40,14 +36,12 @@ struct HashTable{
             HashNode* currentNode;
             int index;
             for (int i = 0; i < m/alpha; ++i) {
-                if (temp[i].head != nullptr){
-                    currentNode = temp[i].head;
-                    while (currentNode != nullptr){
-                        index = hash(currentNode->key);
-                        bucketsArray[index].push_back(currentNode->key, currentNode->value);
-                        n++;
-                        currentNode = currentNode->next;
-                    }
+                currentNode = temp[i].head;
+                while (currentNode != nullptr){
+                    index = hash(currentNode->key);
+                    bucketsArray[index].push_back(currentNode->key, currentNode->value);
+                    n++;
+                    currentNode = currentNode->next;
                 }
             }
             delete [] temp;
@@ -72,10 +66,8 @@ struct HashTable{
         int index = hash(aKey); //  get index
 
         HashNode* currentNode = bucketsArray[index].head;
-        if (bucketsArray[index].head != nullptr){
-            while (currentNode != nullptr && currentNode->key != aKey){
-                currentNode = currentNode->next;
-            }
+        while (currentNode != nullptr && currentNode->key != aKey){
+            currentNode = currentNode->next;
         }
         return currentNode;
     }
@@ -84,14 +76,12 @@ struct HashTable{
         int index = hash(aKey); //  get index
 
         HashNode* currentNode = bucketsArray[index].head;
-        if (bucketsArray[index].head != nullptr) {
-            while (currentNode != nullptr && currentNode->key != aKey) {
-                currentNode = currentNode->next;
-            }
-            if (currentNode != nullptr) {
-                bucketsArray[index].pop(currentNode);
-                n--;
-            }
+        while (currentNode != nullptr && currentNode->key != aKey) {
+            currentNode = currentNode->next;
+        }
+        if (currentNode != nullptr) {
+            bucketsArray[index].pop(currentNode);
+            n--;
         }
     }
 

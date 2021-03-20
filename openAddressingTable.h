@@ -13,7 +13,7 @@ struct Item{
 };
 
 struct HashTable{
-    const float loadFactor = 0.655;
+    const float loadFactor = 0.45;
     const int alpha = 2;
     int m = 8;
     int n = 0;
@@ -36,9 +36,23 @@ struct HashTable{
             bucketsArray = newArray;
 
             //  copy old array
+            long long index;
+            int j;
             for (int i = 0; i < m/alpha; ++i) {
                 if (temp[i].flag == 1){
-                    insert(temp[i].key, temp[i].value);
+                    index = hash(temp[i].key);
+                    j = 1;
+                    while (true){
+                        if (bucketsArray[index].flag == 0){
+                            bucketsArray[index].key = temp[i].key;
+                            bucketsArray[index].value = temp[i].value;
+                            bucketsArray[index].flag = 1;
+                            n++;
+                            break;
+                        }
+                        index = hash(temp[i].key, j);
+                        ++j;
+                    }
                 }
             }
             delete [] temp;
@@ -53,7 +67,7 @@ struct HashTable{
             } else if (bucketsArray[index].flag != 1){
                 bucketsArray[index].key = aKey;
                 bucketsArray[index].value = aValue;
-                bucketsArray[index].flag = true;
+                bucketsArray[index].flag = 1;
                 n++;
                 break;
             }
